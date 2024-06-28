@@ -2,6 +2,9 @@ import Header from "./Header";
 import { BACKGROUND_IMG } from "../utils/constants";
 import { useRef, useState } from "react";
 import {checkValidData } from "./../utils/validate";
+import { auth } from "../utils/firebase";
+import { createUserWithEmailAndPassword  , signInWithEmailAndPassword} from "firebase/auth";
+
 
 
 const Login = () => {
@@ -19,7 +22,48 @@ const Login = () => {
         const emailValue = email.current.value;
         const passwordValue = password.current.value;
         const errorMssg = checkValidData(emailValue,passwordValue);
-        setErrorMssg(errorMssg);
+
+        if( errorMssg ) {
+            setErrorMssg(errorMssg);
+            return;
+        }
+
+        if( !errorMssg ) {
+
+            if(!isSignInForm) {
+                //signUp Form
+
+                createUserWithEmailAndPassword(auth,emailValue,passwordValue)
+                .then((userCredential) => {
+
+                    const user = userCredential.user;
+                    console.log(user);
+
+                }).catch((error) => {
+
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setErrorMssg(errorCode +" " + errorMessage);
+                    
+                  });
+
+            } else {
+                signInWithEmailAndPassword(auth, emailValue, passwordValue)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log(user);
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setErrorMssg(errorCode +" " + errorMessage);
+                });
+            }
+
+        } 
+            
+       
+        
     }
 
     return(
