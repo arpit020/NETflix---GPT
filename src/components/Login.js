@@ -3,14 +3,18 @@ import { BACKGROUND_IMG } from "../utils/constants";
 import { useRef, useState } from "react";
 import {checkValidData } from "./../utils/validate";
 import { auth } from "../utils/firebase";
-import { createUserWithEmailAndPassword  , signInWithEmailAndPassword} from "firebase/auth";
-
-
+import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword  , signInWithEmailAndPassword , updateProfile} from "firebase/auth";
+import { useDispatch } from "react-redux";
+import {addUser} from "../utils/userSlice";
 
 const Login = () => {
     const [isSignInForm , setIsSignInForm ] = useState(true);
     const [errorMssg,setErrorMssg] = useState(null);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
+    const name = useRef("Arpit");
     const email = useRef(null);
     const password = useRef(null);
 
@@ -19,6 +23,7 @@ const Login = () => {
     }
 
     const handleClick = () => {
+        setErrorMssg(null);
         const emailValue = email.current.value;
         const passwordValue = password.current.value;
         const errorMssg = checkValidData(emailValue,passwordValue);
@@ -31,27 +36,32 @@ const Login = () => {
         if( !errorMssg ) {
 
             if(!isSignInForm) {
-                //signUp Form
-
                 createUserWithEmailAndPassword(auth,emailValue,passwordValue)
                 .then((userCredential) => {
 
                     const user = userCredential.user;
-                    console.log(user);
 
+                    updateProfile(auth.currentUser, {
+                        displayName: name?.current?.value
+                    }).then(() => {
+                        const user = auth.currentUser;
+                        dispatch( addUser ({ uid:user.uid , email:user.email , displayName : user.displayName }));
+                        navigate("/browse");
+                    }).catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        setErrorMssg(errorCode +" " + errorMessage);
+                    });
                 }).catch((error) => {
-
                     const errorCode = error.code;
                     const errorMessage = error.message;
                     setErrorMssg(errorCode +" " + errorMessage);
-                    
                   });
-
             } else {
                 signInWithEmailAndPassword(auth, emailValue, passwordValue)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    console.log(user);
+                    navigate("/browse");
                 })
                 .catch((error) => {
                     const errorCode = error.code;
@@ -59,17 +69,12 @@ const Login = () => {
                     setErrorMssg(errorCode +" " + errorMessage);
                 });
             }
-
         } 
-            
-       
-        
     }
 
     return(
         <div className="flex justify-center align-middle">
             <Header />
-
             <div className="absolute top-0 bg-black ">
                 <img className="opacity-50"  src={BACKGROUND_IMG}></img>
             </div>
@@ -79,7 +84,7 @@ const Login = () => {
                 <div className="m-2 " style={{fontSize:'2rem',fontWeight:'700',color:'#FFFFFF'}}>
                     { isSignInForm ? 'Sign In': 'Sign Up'}</div>
                 
-                {!isSignInForm && <input  className="p-4 m-4 rounded-md bg-gray-700"   type="text" placeholder="Full Name"></input>}
+                {!isSignInForm && <input ref={name} className="p-4 m-4 rounded-md bg-gray-700"   type="text" placeholder="Full Name"></input>}
 
                 <input ref={email} className="p-4 m-4 rounded-md bg-gray-700"   type="text" placeholder="Email or mobile number"></input>
                 
