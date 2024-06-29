@@ -25,7 +25,7 @@ const Login = () => {
             navigate("/browse");
         }
     });
-    
+
     const toggleSignIn = () => {
         setIsSignInForm(!isSignInForm);
     }
@@ -47,7 +47,8 @@ const Login = () => {
                 createUserWithEmailAndPassword(auth,emailValue,passwordValue)
                 .then((userCredential) => {
 
-                    const user = userCredential.user;
+                    //const user = userCredential.user;
+                    
 
                     updateProfile(auth.currentUser, {
                         displayName: name?.current?.value
@@ -68,7 +69,7 @@ const Login = () => {
             } else {
                 signInWithEmailAndPassword(auth, emailValue, passwordValue)
                 .then((userCredential) => {
-                    const user = userCredential.user;
+                    //const user = userCredential.user;
                     //navigate("/browse");
                 })
                 .catch((error) => {
@@ -84,7 +85,7 @@ const Login = () => {
         <div className="flex justify-center align-middle">
             <Header />
             <div className="absolute top-0 bg-black ">
-                <img className="opacity-50"  src={BACKGROUND_IMG}></img>
+                <img  alt="background-image" className="opacity-50"  src={BACKGROUND_IMG}></img>
             </div>
 
             <form  onSubmit={(e)=> {e.preventDefault() }} className="w-1/4  relative p-12 bg-black flex flex-col mt-40 opacity-80 text-white rounded-md">
