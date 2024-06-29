@@ -1,20 +1,41 @@
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { NETFLIX_IMG_CDN, NETFLIX_USER_ICON } from "../utils/constants";
 import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import {addUser, removeUser} from "../utils/userSlice";
 
 const Header = () => {
 
     const navigate = useNavigate();
     const [logoutDropDown , setLogoutDropDown] = useState(false);
     const user = useSelector( (store) => store.user);
+    const dispatch = useDispatch();
+
+    useEffect( () => {
+
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if( user ) {
+                dispatch( addUser ({ uid:user.uid , email:user.email , displayName : user.displayName }));
+                navigate("/browse")
+            } else {
+                dispatch(removeUser());
+                navigate("/");
+            }
+        });
+
+
+        return () => unsubscribe();
+        
+    } , [] );
+
 
     const handleSignOut = () => {
         signOut(auth).then(
             ()=> {
-            navigate("/");
+            //navigate("/");
         }).catch(()=>{
             navigate("/error");
         })
