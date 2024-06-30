@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {addUser, removeUser} from "../utils/userSlice";
+import { toggleGPTSearchView } from "../utils/gptSlice";
 
 const Header = () => {
 
@@ -13,6 +14,7 @@ const Header = () => {
     const [logoutDropDown , setLogoutDropDown] = useState(false);
     const user = useSelector( (store) => store.user);
     const dispatch = useDispatch();
+    const gptState = useSelector((store) => store.gpt);
 
     useEffect( () => {
 
@@ -45,21 +47,28 @@ const Header = () => {
         setLogoutDropDown(!logoutDropDown);
     }
 
+    const handleGPTSearch = () => {
+        dispatch(toggleGPTSearchView());
+    }
+
     return (
-    <div className="py-6 w-screen px-12 fixed z-10 flex justify-between" 
+    <div className="py-6 w-screen px-12 fixed top-0 z-10 flex justify-between" 
     style={{backgroundImage:'linear-gradient(180deg,rgba(0,0,0,.7) 10%,transparent)'}} >
         <div>
             <img className="w-44" style={{color:'red'}} src={NETFLIX_IMG_CDN + 'Netflix_Logo_PMS.png'}></img> 
         </div>
 
-        { user &&  <div className="my-auto relative">
+        { user &&  <div className="my-auto relative flex gap-5">
+            {  <button className="mr-2 bg-red-700 rounded-lg" style={{padding:'10px 20px'}}
+            onClick={handleGPTSearch} > { !gptState.showGPTSearch  ? 'GPT Search' : 'Go To Browse'}</button>
+            }
             <div className="flex">
-                <img className="w-10" src={NETFLIX_USER_ICON} ></img>
+                <img  src={NETFLIX_USER_ICON} ></img>
                 <div className="px-2 my-auto text-white cursor-pointer" onClick={handleDropDown}>
                    { logoutDropDown ? '▲' : '▼' }  </div>
             </div>
 
-            { logoutDropDown && <div className="absolute bg-black flex flex-col opacity-70 text-white rounded-md right-0 top-12 w-56 p-5">
+            { logoutDropDown && <div className="absolute bg-black flex flex-col opacity-70 text-white rounded-md right-0 top-16 w-56 p-5">
                 <div className="pb-2"> { user.displayName || "Arpit Rathi"}</div>
                 <hr className="pb-2"></hr>
                 <button className="text-white" onClick={handleSignOut}>Sign Out</button>
