@@ -8,9 +8,9 @@ const VideoBackground = ({movieId}) => {
     
 
     return(
-        <div className="w-screen">
-            <iframe className="w-screen aspect-video"
-            src={"https://www.youtube.com/embed/"+ trailerKey + "?&autoplay=1&mute=1"}  
+        <div style={{width:'-webkit-fill-available' }}>
+            <iframe className="w-screen aspect-video pointer-events-none"
+            src={"https://www.youtube.com/embed/"+ trailerKey + "?controls=0&modestbranding=0&rel=0&showinfo=0&iv_load_policy=3&autoplay=1&mute=1&"}  
             title="YouTube video player" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
             referrerPolicy="strict-origin-when-cross-origin" 
@@ -21,4 +21,4 @@ const VideoBackground = ({movieId}) => {
 
 export default VideoBackground;
 
-//src="https://www.youtube.com/embed/rzOQ4_MRjoI?si=JWGJH9w9FSbW7Rxs" 
+//src="https://www.youtube.com/embed/rzOQ4_MRjoI?si=JWGJH9w9FSbW7Rxs  autoplay=1&mute=1&" 
