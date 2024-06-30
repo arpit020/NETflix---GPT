@@ -12,7 +12,7 @@ const MainContainer = () => {
 
     //const randomNum = Math.floor((Math.random() * movies.results.length - 1));
 
-    const mainMovie =  movies.results[2];
+    const mainMovie =  movies.results[3];
     const { original_title , overview , id } = mainMovie;
 
     return(
